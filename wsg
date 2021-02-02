@@ -1,0 +1,94 @@
+#!/bin/sh
+#this script is dependent on pandoc
+
+SRC=$1 
+DST=$2
+
+main() {
+    if [ -f _header.html ] && [ -f _footer.html ]; then
+	if [ -d "$SRC" ] && [ -d "$SRC"/blog ]; then
+	    generate_html
+	    generate_blog_html
+	    generate_rss
+	else
+	    echo 'invalid source directory'
+	fi
+    else
+	echo "missing header or footer file"
+    fi
+}
+
+generate_html(){
+
+    #check if destination exits
+    if [ ! -d "$DST" ]; then
+	mkdir "$DST"
+    else
+	rm -r "$DST"
+	mkdir "$DST"
+    fi
+
+    set_date
+    
+    # generate html for each markdown file in the blog folder
+    for FILE in "$SRC"/blog/*.md ; do
+	pandoc -f markdown -t html "$FILE" | cat _header.html - _footer.html > "$DST"/"$(basename "$FILE" | sed "s/.md/.html/" )"
+    done
+
+    # generate html for each markdown file in the SRC folder
+    for FILE in "$SRC"/*.md ; do
+	pandoc -f markdown -t html "$FILE" | cat _header.html - _footer.html > "$DST"/"$(basename "$FILE" | sed "s/.md/.html/")"
+    done
+    # copy stylesheet if available
+    if [ -f stylesheet.css ]; then
+	cp stylesheet.css "$DST"
+    fi
+}
+
+generate_blog_html(){
+
+    echo \# Blog >> /tmp/blog.md
+
+    # generates markdown file for blog index
+    for FILE in $(ls -t "$SRC"/blog/*.md ); do
+	echo - ["$(head -n 1 "$FILE" | cut -b 3-)"]\("$(basename "$FILE" | sed "s/.md/.html/")"\) >> /tmp/blog.md
+    done
+
+    #convert blog index markdown to html
+    pandoc -f markdown -t html /tmp/blog.md | cat _header.html - _footer.html> "$DST"/blog.html
+
+    rm /tmp/blog.md
+    
+}
+
+set_date(){
+    # set date for file
+    for FILE in "$SRC"/blog/*.md; do
+	if [ "$(head -n 2 "$FILE" | awk 'NR==2')" = "" ]; then
+	    sed -i  2i\ "$(date '+%a, %d %b %G %H:%M:%S GMT')" "$FILE"
+
+	fi
+    done
+}
+
+generate_rss(){
+    # generate rss.xml
+    if [ ! -f  _rss.xml ]; then
+	echo missing rss template
+    else
+	cp _rss.xml "$DST"/rss.xml
+	for FILE in "$SRC"/blog/*.md; do
+	    {
+	    echo "<item>
+	         <title> $(head -n 1 "$FILE" | cut -b 3-) </title>
+		 <pubDate> $(awk 'NR==2' "$FILE") </pubDate>
+		 <link> $(awk 'NR==5 {print $2}' _rss.xml)/$(basename "$FILE" .md).html </link>
+		 <description> $(pandoc -f markdown -t html "$FILE") </description>
+		 </item>"
+	    } >> "$DST"/rss.xml
+	done
+    fi
+    echo "</channel> </rss>" >> "$DST"/rss.xml
+}
+
+main
