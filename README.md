@@ -7,7 +7,7 @@ It generates a website by converting markdown files into html and then "sandwich
 ## Usage
 
 ```console
-sitegen SOURCE_DIRECTORY DESTINATION_DIRECTORY
+wsg SOURCE_DIRECTORY DESTINATION_DIRECTORY
 ```
 
 The SOURCE_DIRECTORY is the folder which contains all the markdown files. All markdown files inside will be converted to html and will retain the same name (only the file extension changes). It also must contain a directory called exactly "blog" else the script will not run. The blog folder must contain all the markdown files you intend to post as a blog. All of posts will be displayed on a file named blog.html. At last, the directory must contain a css file named stylesheet.css.
