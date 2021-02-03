@@ -10,8 +10,8 @@ It generates a website by converting markdown files into html and then "sandwich
 wsg SOURCE_DIRECTORY DESTINATION_DIRECTORY
 ```
 
-The SOURCE_DIRECTORY is the folder which contains all the markdown files. All markdown files inside will be converted to html and will retain the same name (only the file extension changes). It also must contain a directory called exactly "blog" else the script will not run. The blog folder must contain all the markdown files you intend to post as a blog. All of posts will be displayed on a file named blog.html. At last, the directory must contain a css file named stylesheet.css.
+The base directory where the script is ran must contain the following files: "_footer.html", "_header.html", "_rss.xml" and "_stylesheet.css" (the last one being optional). The _rss.xml file will must contain the beginning of your rss until the first item tag.
 
-the base directory where the script is run must contain two files called "_footer.html" and "_header.html". These will be utilized to "sandwich" the main content of the page.
+The SOURCE_DIRECTORY is the folder which contains all the markdown files. All markdown files inside will be converted to html and will retain the same name (only the file extension changes). It also must contain a directory called exactly "blog". The blog directory must contain all the markdown files you intend to post as a blog. All of posts will be displayed on a file named blog.html and will be added to the rss.xml file.
 
-The result will be in the DESTINATION_DIRECTORY.
+The end result of the script will be in the DESTINATION_DIRECTORY.
