@@ -23,9 +23,6 @@ generate_html(){
     #check if destination exits
     if [ ! -d "$DST" ]; then
 	mkdir "$DST"
-    else
-	rm -r "$DST"
-	mkdir "$DST"
     fi
 
     set_date
