@@ -37,8 +37,8 @@ generate_html(){
 	pandoc -f markdown -t html "$FILE" | cat _header.html - _footer.html > "$DST"/"$(basename "$FILE" | sed "s/.md/.html/")"
     done
     # copy stylesheet if available
-    if [ -f stylesheet.css ]; then
-	cp stylesheet.css "$DST"
+    if [ -f _stylesheet.css ]; then
+	cp _stylesheet.css "$DST"/stylesheet.css
     fi
 }
 
