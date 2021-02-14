@@ -23,9 +23,14 @@ generate_html(){
     #check if destination exits
     if [ ! -d "$DST" ]; then
 	mkdir "$DST"
+	if [ -d "$SRC"/IMG ]; then
+	    cp -r "$SRC"/IMG "$DST"/img
+	fi
     fi
 
+
     set_date
+
     
     # generate html for each markdown file in the blog folder
     for FILE in "$SRC"/blog/*.md ; do
